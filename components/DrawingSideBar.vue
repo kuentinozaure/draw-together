@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { onMounted, unMounted } from 'vue';
 import Communicator from '../socket/communicator';
+import { BaseSocketPayload } from '../models/base-socket-payload';
 
 let communicator: ref<Communicator> | null = null;
+let channel = ref<any>(null);
+let roomId = ref<string>('');
 
 onMounted(async () => {
 });
@@ -13,24 +16,46 @@ onUnmounted(() => {
     }
 });
 
-// const onSendMessageClick = () => {
-//   console.log('onSendMessageClick');
-//   communicator.onSendMessageToChannel('pouet', 'Hello world' + window.navigator.userAgent);
-//   console.log(communicator.getMessages());
-// };
+const onSendMessageClick = () => {
+    const mathRandom = Math.random();
+
+    const payload: BaseSocketPayload<string> = {
+        date: new Date(),
+        roomId: roomId.value,
+        message: 'Hello world from' + mathRandom
+    };
+
+    communicator.onSendHelloMessage(payload);
+};
 
 const onCreateRoomClick = () => {
-    const randomRoomId = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
-    console.log('Your room id is: ' + randomRoomId);
+    roomId.value = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
     communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
-    communicator.onCreateChannel(randomRoomId);
+    channel = communicator.onCreateChannel(roomId.value);
 
+    channel.subscribe((message) => {
+        console.log(message.data);
+    });
 };
+
+
+const onJoinRoomClick = () => {
+    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+    channel = communicator.onCreateChannel(roomId.value);
+
+    channel.subscribe((message) => {
+        console.log(message.data);
+    });
+};
+
 </script>
 
 <template>
     <div class="drawer-side-bar-container">
         <Button label="Create your room" icon="pi pi-check" @click="onCreateRoomClick" />
+        <span>or</span>
+        <input type="text" placeholder="Enter room id" v-model="roomId" />
+        <Button label="Join a room" icon="pi pi-check" @click="onJoinRoomClick" />
 
         <Button label="Send message to ably" icon="pi pi-check" @click="onSendMessageClick" />
     </div>
@@ -39,11 +64,18 @@ const onCreateRoomClick = () => {
 
 <style scoped>
 .drawer-side-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1rem;
     border-radius: 1rem;
     background-color: #1e293b;
     width: 100%;
     height: 100%;
     box-shadow: 0 0 #0000, 0 0 #0000, 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
+
+
 }
 
 @media only screen and (max-width: 768px) {

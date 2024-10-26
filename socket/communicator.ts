@@ -1,4 +1,6 @@
 import Ably from "ably";
+import { MessageType } from "~/enums/message-type";
+import type { BaseSocketPayload } from "~/models/base-socket-payload";
 
 export default class Communicator {
   private static instance: Communicator;
@@ -48,11 +50,13 @@ export default class Communicator {
     // Throw an error if the client is not initialized
   }
 
-  onSendMessageToChannel(messageName: string, messageData: string) {
+  onSendHelloMessage(message: BaseSocketPayload<string>) {
     if (this.channel) {
-      this.channel.publish(messageName, messageData);
+      this.channel.publish(MessageType.HELLO, message);
     }
 
     // Throw an error if the channel is not initialized
   }
+
+  // Define the other send methods here with the same structure as onSendHelloMessage
 }

@@ -57,7 +57,6 @@ const draw = (event: MouseEvent) => {
 
     const { x, y } = getCoordinates(event);
 
-    console.log('drawing')
     ctx.lineTo(x - canvasOffsetX, y - canvasOffsetY);
     ctx.stroke();
 }
