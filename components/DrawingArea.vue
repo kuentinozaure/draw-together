@@ -29,12 +29,8 @@ onMounted(() => {
 
 const onCanvasMousedown = (event: MouseEvent) => {
     isPainting = true;
-    // - 48 * 2;
     startX = event.clientX;
     startY = event.clientY;
-
-    console.log('startX', startX)
-    console.log('startY', startY)
 }
 
 const onCanvasMouseUp = (event: MouseEvent) => {
