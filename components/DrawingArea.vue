@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 
 const drawingArea = useTemplateRef('drawing-area-canvas')
+const drawerAreaContainer = useTemplateRef('drawer-area-container')
+
 let ctx = null;
 let canvasOffsetX = 0;
 let canvasOffsetY = 0;
@@ -11,11 +13,13 @@ let isPainting = false;
 
 onMounted(() => {
     ctx = drawingArea.value.getContext('2d');
-    canvasOffsetX = drawingArea.value.offsetLeft;
-    canvasOffsetY = drawingArea.value.offsetTop;
+    canvasOffsetX = drawerAreaContainer.value.offsetLeft;
+    canvasOffsetY = drawerAreaContainer.value.offsetTop;
 
-    drawingArea.value.width = window.innerWidth - canvasOffsetX;
-    drawingArea.value.height = window.innerHeight - canvasOffsetY;
+    // TODO: Tweak the 48 magic number to handle the mobile mode
+    // 48px here the padding left and the padding bottom of the drawing area
+    drawingArea.value.width = window.innerWidth - canvasOffsetX - 48;
+    drawingArea.value.height = window.innerHeight - canvasOffsetY - 48;
 
 
     ctx.strokeStyle = '#000000';
@@ -25,8 +29,12 @@ onMounted(() => {
 
 const onCanvasMousedown = (event: MouseEvent) => {
     isPainting = true;
+    // - 48 * 2;
     startX = event.clientX;
     startY = event.clientY;
+
+    console.log('startX', startX)
+    console.log('startY', startY)
 }
 
 const onCanvasMouseUp = (event: MouseEvent) => {
@@ -36,22 +44,20 @@ const onCanvasMouseUp = (event: MouseEvent) => {
 }
 
 const draw = (event: MouseEvent) => {
-    console.log('draw')
     if (!isPainting) {
         return;
     }
 
     ctx.lineWidth = 5;
     ctx.lineCap = 'round';
-
-    ctx.lineTo(event.clientX, event.clientY);
+    ctx.lineTo(event.clientX - canvasOffsetX, event.clientY - canvasOffsetY);
     ctx.stroke();
 }
 
 </script>
 
 <template>
-    <div class="drawer-area-container">
+    <div class="drawer-area-container" ref="drawer-area-container">
         <canvas class="drawing-area" ref="drawing-area-canvas" v-on:mousedown="onCanvasMousedown"
             v-on:mouseup="onCanvasMouseUp" v-on:mousemove="draw"></canvas>
         <DrawingToolBar class="drawing-toolbar"></DrawingToolBar>
