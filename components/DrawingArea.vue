@@ -22,26 +22,43 @@ onMounted(() => {
     // 48px here the padding left and the padding bottom of the drawing area
     drawingArea.value.width = window.innerWidth - canvasOffsetX - 48;
     drawingArea.value.height = window.innerHeight - canvasOffsetY - 48;
+    setStrokeAttributes()
 })
 
-const onCanvasMousedown = (event: MouseEvent) => {
+const onCanvasMousedown = (event: MouseEvent | TouchEvent) => {
+    const { x, y } = getCoordinates(event);
+
     isPainting = true;
     setStrokeAttributes();
-    startX = event.clientX;
-    startY = event.clientY;
+    startX = x;
+    startY = y;
 }
 
-const onCanvasMouseUp = (event: MouseEvent) => {
+const onCanvasMouseUp = (event: MouseEvent | TouchEvent) => {
     isPainting = false;
     ctx.stroke();
     ctx.beginPath();
+}
+
+const getCoordinates = (event: MouseEvent | TouchEvent) => {
+    if (event instanceof MouseEvent) {
+        return { x: event.clientX, y: event.clientY };
+    } else if (event instanceof TouchEvent) {
+        const touch = event.touches[0];
+        return { x: touch.clientX, y: touch.clientY };
+    }
+    return { x: 0, y: 0 };
 }
 
 const draw = (event: MouseEvent) => {
     if (!isPainting) {
         return;
     }
-    ctx.lineTo(event.clientX - canvasOffsetX, event.clientY - canvasOffsetY);
+
+    const { x, y } = getCoordinates(event);
+
+    console.log('drawing')
+    ctx.lineTo(x - canvasOffsetX, y - canvasOffsetY);
     ctx.stroke();
 }
 
@@ -62,7 +79,7 @@ const setStrokeAttributes = () => {
     <div class="drawer-area-container" ref="drawer-area-container">
         <canvas class="drawing-area" ref="drawing-area-canvas" v-on:mousedown="onCanvasMousedown"
             v-on:mouseup="onCanvasMouseUp" v-on:mousemove="draw" @touchstart="onCanvasMousedown"
-            v-on:touchcancel="onCanvasMouseUp" v-on:touchmove="draw"></canvas>
+            v-on:touchend="onCanvasMouseUp" v-on:touchmove="draw"></canvas>
         <DrawingToolBar class="drawing-toolbar"></DrawingToolBar>
     </div>
 </template>
@@ -75,6 +92,8 @@ const setStrokeAttributes = () => {
     height: 100%;
     box-shadow: 0 0 #0000, 0 0 #0000, 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a;
     cursor: url('../assets/svg/pointer.svg'), auto;
+    /* touch-action: pan-x pan-y; */
+    touch-action: none;
 
 
     .drawing-area {
@@ -84,6 +103,8 @@ const setStrokeAttributes = () => {
         height: 100%;
         width: 100%;
         z-index: 1;
+
+
     }
 
     .drawing-toolbar {
