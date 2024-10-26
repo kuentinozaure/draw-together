@@ -53,7 +53,6 @@ body {
 }
 
 .main-container {
-  padding: 3rem;
   width: 100vw;
   height: 100vh;
 }

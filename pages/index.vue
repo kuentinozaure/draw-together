@@ -5,7 +5,10 @@
 <template>
     <div class="board-container">
         <DrawingSideBar />
-        <DrawingArea />
+        <div class="drawing-area">
+            <DrawingArea />
+        </div>
+
     </div>
 </template>
 
@@ -16,5 +19,20 @@
     gap: 1.5rem;
     width: 100%;
     height: 100%;
+    padding: 3rem;
+}
+
+@media only screen and (max-width: 768px) {
+    .board-container {
+        display: flex;
+        flex-direction: column-reverse;
+        padding: 0rem;
+    }
+
+    .drawing-area {
+        padding: 1rem 1rem 0rem 1rem;
+        width: 100%;
+        height: 100%;
+    }
 }
 </style>
