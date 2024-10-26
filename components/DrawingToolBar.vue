@@ -7,6 +7,7 @@ const onChangePenSize = () => {
 
 const onEraserClick = () => {
     useDrawingStore().setPenColor('#F4F8FB');
+    useDrawingStore().setPenSize(200);
 }
 
 const onChangePenColor = () => {

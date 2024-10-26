@@ -1,10 +1,38 @@
 <script setup lang="ts">
+import { onMounted, unMounted } from 'vue';
+import Communicator from '../socket/communicator';
 
+let communicator: ref<Communicator> | null = null;
+
+onMounted(async () => {
+});
+
+onUnmounted(() => {
+    if (communicator) {
+        communicator.onCloseConnection();
+    }
+});
+
+// const onSendMessageClick = () => {
+//   console.log('onSendMessageClick');
+//   communicator.onSendMessageToChannel('pouet', 'Hello world' + window.navigator.userAgent);
+//   console.log(communicator.getMessages());
+// };
+
+const onCreateRoomClick = () => {
+    const randomRoomId = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
+    console.log('Your room id is: ' + randomRoomId);
+    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+    communicator.onCreateChannel(randomRoomId);
+
+};
 </script>
 
 <template>
     <div class="drawer-side-bar-container">
-        <!-- TODO: Define the content of the side bar -->
+        <Button label="Create your room" icon="pi pi-check" @click="onCreateRoomClick" />
+
+        <Button label="Send message to ably" icon="pi pi-check" @click="onSendMessageClick" />
     </div>
 
 </template>

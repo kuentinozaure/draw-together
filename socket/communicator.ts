@@ -1,17 +1,14 @@
 import Ably from "ably";
 
 export default class Communicator {
-  ablyClient: Ably.Realtime | null = null;
+  private static instance: Communicator;
 
+  ablyClient: Ably.Realtime | null = null;
   channel: Ably.RealtimeChannel | null = null;
 
-  messages: string[] = [];
-
-  constructor(apiKey: string) {
-    // TODO - move the API key to .env
+  private constructor(apiKey: string) {
     this.ablyClient = new Ably.Realtime(apiKey);
 
-    // TODO - remove the console.log statements
     this.ablyClient.connection.once("connected", () => {
       console.log("Connected to Ably!");
     });
@@ -21,15 +18,24 @@ export default class Communicator {
     });
   }
 
-  onCreateChannel(channelName: string) {
+  public static getInstance(apiKey: string): Communicator {
+    if (!Communicator.instance) {
+      Communicator.instance = new Communicator(apiKey);
+    }
+    return Communicator.instance;
+  }
+
+  /**
+   * This method creates a channel with the given name
+   * @param channelName - The name of the channel to create
+   */
+  onCreateChannel(channelName: string): Ably.RealtimeChannel | null {
     if (this.ablyClient) {
       this.channel = this.ablyClient.channels.get(channelName);
-
-      this.channel.subscribe((message) => {
-        console.log("Message received: " + message);
-        this.messages.push(message.data);
-      });
+      return this.channel;
     }
+
+    return null;
 
     // Throw an error if the client is not initialized
   }
@@ -48,9 +54,5 @@ export default class Communicator {
     }
 
     // Throw an error if the channel is not initialized
-  }
-
-  getMessages() {
-    return this.messages.toString();
   }
 }
