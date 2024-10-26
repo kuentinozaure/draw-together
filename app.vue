@@ -28,14 +28,10 @@ const onCreateRoomClick = () => {
 
 <template>
   <div>
+    <Button label="Create your room" icon="pi pi-check" @click="onCreateRoomClick" />
 
-    <button @click="onCreateRoomClick">
-      Create your room
-    </button>
+    <Button label="Send message to ably" icon="pi pi-check" @click="onSendMessageClick" />
 
-    <button @click="onSendMessageClick">
-      Send message to ably
-    </button>
 
     <span>
       {{ communicator?.getMessages() }}
