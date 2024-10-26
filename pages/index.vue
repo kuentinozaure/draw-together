@@ -33,7 +33,7 @@
     .drawing-area {
         padding: 1rem 1rem 0rem 1rem;
         width: 100%;
-        height: calc(100vh - 65px - 1rem);
+        height: calc(100dvh - 65px - 1rem);
     }
 }
 </style>
