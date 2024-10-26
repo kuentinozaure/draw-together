@@ -1,0 +1,64 @@
+<script setup lang="ts">
+
+</script>
+
+<template>
+    <div class="drawer-tool-bar-container">
+        <!-- TODO: Define the content of the side bar -->
+        <div class="main-item">
+            First element
+        </div>
+        <div class="sub-item">
+            Second element
+        </div>
+        <div class="sub-item">
+            Third element
+        </div>
+        <div class="sub-item">
+            Fourth element
+        </div>
+    </div>
+
+</template>
+
+<style scoped>
+.drawer-tool-bar-container {
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 65px;
+    width: 65px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: border-radius 0.3s ease, width 0.3s ease, opacity 0.3s ease,
+        visibility 0.3s ease;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    .main-item {
+        display: block;
+    }
+
+    .sub-item {
+        display: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    &:hover {
+        border-radius: 1rem;
+        width: 50%;
+        padding-inline: 1rem;
+
+
+        .sub-item {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+</style>
