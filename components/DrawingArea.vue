@@ -11,17 +11,21 @@ let canvasOffsetY = 0;
 let startX = 0
 let startY = 0;
 let isPainting = false;
+let isMobile = false;
 
 
 onMounted(() => {
+    isMobile = window.innerWidth <= 768;
     ctx = drawingArea.value.getContext('2d');
     canvasOffsetX = drawerAreaContainer.value.offsetLeft;
     canvasOffsetY = drawerAreaContainer.value.offsetTop;
 
     // TODO: Tweak the 48 magic number to handle the mobile mode
     // 48px here the padding left and the padding bottom of the drawing area
-    drawingArea.value.width = window.innerWidth - canvasOffsetX - 48;
-    drawingArea.value.height = window.innerHeight - canvasOffsetY - 48;
+    // 32px here the padding left and the padding bottom of the drawing area
+    // 97px here the padding top and the padding bottom of the drawing area + the height of the sidebar 
+    drawingArea.value.width = !isMobile ? window.innerWidth - canvasOffsetX - 48 : window.innerWidth - canvasOffsetX - 32;
+    drawingArea.value.height = !isMobile ? window.innerHeight - canvasOffsetY - 48 : window.innerHeight - canvasOffsetY - 97;
     setStrokeAttributes()
 })
 
@@ -49,6 +53,7 @@ const getCoordinates = (event: MouseEvent | TouchEvent) => {
     }
     return { x: 0, y: 0 };
 }
+
 
 const draw = (event: MouseEvent) => {
     if (!isPainting) {
