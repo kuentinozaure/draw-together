@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import { useDrawingStore } from '../store/DrawingStore';
+
+const onChangePenSize = () => {
+    console.log('onChangePenSize')
+    useDrawingStore().setPenSize(20);
+}
 
 </script>
 
 <template>
     <div class="drawer-tool-bar-container">
         <!-- TODO: Define the content of the side bar -->
-        <div class="main-item">
-            First element
+        <div class="main-item" v-on:click="onChangePenSize">
+            Change pen size
         </div>
         <div class="sub-item">
-            Second element
+            Change pen color
         </div>
         <div class="sub-item">
-            Third element
+            Eraser
         </div>
         <div class="sub-item">
             Fourth element

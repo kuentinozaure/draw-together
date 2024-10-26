@@ -10,14 +10,19 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.5",
     "@primevue/themes": "^4.1.1",
     "ably": "^2.4.1",
     "nuxt": "^3.13.2",
+    "pinia": "^2.2.4",
     "primevue": "^4.1.1",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
     "@primevue/nuxt-module": "^4.1.1"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }

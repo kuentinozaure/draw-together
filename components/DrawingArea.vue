@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useDrawingStore } from '../store/DrawingStore';
 
 const drawingArea = useTemplateRef('drawing-area-canvas')
 const drawerAreaContainer = useTemplateRef('drawer-area-container')
@@ -11,6 +12,7 @@ let startX = 0
 let startY = 0;
 let isPainting = false;
 
+
 onMounted(() => {
     ctx = drawingArea.value.getContext('2d');
     canvasOffsetX = drawerAreaContainer.value.offsetLeft;
@@ -20,37 +22,37 @@ onMounted(() => {
     // 48px here the padding left and the padding bottom of the drawing area
     drawingArea.value.width = window.innerWidth - canvasOffsetX - 48;
     drawingArea.value.height = window.innerHeight - canvasOffsetY - 48;
-
-
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
 })
 
 const onCanvasMousedown = (event: MouseEvent) => {
-    console.log('onCanvasMousedown')
     isPainting = true;
+    setStrokeAttributes();
     startX = event.clientX;
     startY = event.clientY;
 }
 
 const onCanvasMouseUp = (event: MouseEvent) => {
-    console.log('onCanvasMouseUp')
     isPainting = false;
     ctx.stroke();
     ctx.beginPath();
 }
 
 const draw = (event: MouseEvent) => {
-    console.log('draw')
     if (!isPainting) {
         return;
     }
-
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
     ctx.lineTo(event.clientX - canvasOffsetX, event.clientY - canvasOffsetY);
     ctx.stroke();
+}
+
+const setStrokeAttributes = () => {
+    // get data from the store
+    const penSize = ref<number>(useDrawingStore().getPenSize);
+
+    // set the attributes to the canvas
+    ctx.lineWidth = penSize.value;
+    ctx.strokeStyle = '#000000';
+    ctx.lineCap = 'round';
 }
 
 </script>
