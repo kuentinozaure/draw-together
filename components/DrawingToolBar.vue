@@ -2,9 +2,19 @@
 import { useDrawingStore } from '../store/DrawingStore';
 
 const onChangePenSize = () => {
-    console.log('onChangePenSize')
     useDrawingStore().setPenSize(20);
 }
+
+const onEraserClick = () => {
+    useDrawingStore().setPenColor('#F4F8FB');
+}
+
+const onChangePenColor = () => {
+    useDrawingStore().setPenColor('#000000');
+}
+
+
+
 
 </script>
 
@@ -14,14 +24,14 @@ const onChangePenSize = () => {
         <div class="main-item" v-on:click="onChangePenSize">
             Change pen size
         </div>
-        <div class="sub-item">
+        <div class="sub-item" v-on:click="onChangePenColor">
             Change pen color
         </div>
-        <div class="sub-item">
+        <div class="sub-item" v-on:click="onEraserClick">
             Eraser
         </div>
         <div class="sub-item">
-            Fourth element
+            Clean the board
         </div>
     </div>
 

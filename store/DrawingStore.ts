@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 type DrawingState = {
   penSize: number;
   penColor: string;
+  cleanBoard: boolean;
 };
 
 export const useDrawingStore = defineStore("DrawingStore", {
@@ -19,7 +20,7 @@ export const useDrawingStore = defineStore("DrawingStore", {
 
   actions: {
     setPenSize(penSize: number) {
-      this.penSize = this.penSize + 1; // TODO Change this with a value selected by user
+      this.penSize = penSize; // TODO Change this with a value selected by user
     },
     setPenColor(penColor: string) {
       this.penColor = penColor;
