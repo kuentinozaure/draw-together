@@ -47,11 +47,12 @@ const draw = (event: MouseEvent) => {
 
 const setStrokeAttributes = () => {
     // get data from the store
-    const penSize = ref<number>(useDrawingStore().getPenSize);
+    const penColor = useDrawingStore().getPenColor;
+    const penSize = useDrawingStore().getPenSize;
 
     // set the attributes to the canvas
-    ctx.lineWidth = penSize.value;
-    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = penSize;
+    ctx.strokeStyle = penColor;
     ctx.lineCap = 'round';
 }
 
