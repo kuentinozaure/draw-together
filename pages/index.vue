@@ -27,12 +27,13 @@
         display: flex;
         flex-direction: column-reverse;
         padding: 0rem;
+        height: fit-content;
     }
 
     .drawing-area {
         padding: 1rem 1rem 0rem 1rem;
         width: 100%;
-        height: 100%;
+        height: calc(100vh - 65px - 1rem);
     }
 }
 </style>
