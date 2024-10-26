@@ -21,8 +21,10 @@ const onChangePenColor = () => {
 
 <template>
     <div class="drawer-tool-bar-container">
-        <!-- TODO: Define the content of the side bar -->
-        <div class="main-item" v-on:click="onChangePenSize">
+        <div class="main-item">
+            Toolbox
+        </div>
+        <div class="sub-item" v-on:click="onChangePenSize">
             Change pen size
         </div>
         <div class="sub-item" v-on:click="onChangePenColor">
@@ -69,6 +71,10 @@ const onChangePenColor = () => {
         border-radius: 1rem;
         width: 50%;
         padding-inline: 1rem;
+
+        .main-item {
+            display: none;
+        }
 
 
         .sub-item {
