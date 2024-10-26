@@ -28,18 +28,21 @@ onMounted(() => {
 })
 
 const onCanvasMousedown = (event: MouseEvent) => {
+    console.log('onCanvasMousedown')
     isPainting = true;
     startX = event.clientX;
     startY = event.clientY;
 }
 
 const onCanvasMouseUp = (event: MouseEvent) => {
+    console.log('onCanvasMouseUp')
     isPainting = false;
     ctx.stroke();
     ctx.beginPath();
 }
 
 const draw = (event: MouseEvent) => {
+    console.log('draw')
     if (!isPainting) {
         return;
     }
@@ -55,7 +58,8 @@ const draw = (event: MouseEvent) => {
 <template>
     <div class="drawer-area-container" ref="drawer-area-container">
         <canvas class="drawing-area" ref="drawing-area-canvas" v-on:mousedown="onCanvasMousedown"
-            v-on:mouseup="onCanvasMouseUp" v-on:mousemove="draw"></canvas>
+            v-on:mouseup="onCanvasMouseUp" v-on:mousemove="draw" @touchstart="onCanvasMousedown"
+            v-on:touchcancel="onCanvasMouseUp" v-on:touchmove="draw"></canvas>
         <DrawingToolBar class="drawing-toolbar"></DrawingToolBar>
     </div>
 </template>
