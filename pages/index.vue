@@ -1,10 +1,51 @@
 <script setup lang="ts">
+import { onMounted, unMounted } from 'vue';
+import Communicator from '../socket/communicator';
+import { BaseSocketPayload } from '../models/base-socket-payload';
+import { useCommunicatorStore } from '../store/CommunicatorStore';
+
+let communicator: ref<Communicator> | null = null;
+let channel: ref<any> | null = null;
+
+const onSendMessageClick = () => {
+    const roomId = useCommunicatorStore().getCurrentChannel;
+    console.log('Send message');
+    const mathRandom = Math.random();
+
+    const payload: BaseSocketPayload<string> = {
+        date: new Date(),
+        roomId: roomId,
+        message: 'Hello world from' + mathRandom
+    };
+
+    communicator.onSendHelloMessage(payload);
+};
+
+onMounted(() => {
+    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+});
+
+onUnmounted(() => {
+    if (communicator) {
+        communicator.onCloseConnection();
+    }
+});
+
+const onJoinRoom = () => {
+    const roomId = useCommunicatorStore().getCurrentChannel;
+    channel = communicator.onCreateChannel(roomId);
+
+    channel.subscribe((message) => {
+        console.log(message.data);
+    });
+};
+
 
 </script>
 
 <template>
     <div class="board-container">
-        <DrawingSideBar />
+        <DrawingSideBar @joinRoom="onJoinRoom" @roomCreated="onJoinRoom" @sendMessage="onSendMessageClick" />
         <div class="drawing-area">
             <DrawingArea />
         </div>

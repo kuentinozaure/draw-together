@@ -1,27 +1,22 @@
 import { defineStore } from "pinia";
 
-type DrawingState = {
-  currentChannel: string;
+type CommunicatorState = {
+  currentChannel: string | null;
 };
 
-// export const useDrawingStore = defineStore("DrawingStore", {
-//   state: () =>
-//     ({
-//       penSize: 1,
-//       penColor: "#000000",
-//     } as DrawingState),
+export const useCommunicatorStore = defineStore("CommunicationStore", {
+  state: () =>
+    ({
+      currentChannel: null,
+    } as CommunicatorState),
 
-//   getters: {
-//     getPenSize: (state: DrawingState) => state.penSize,
-//     getPenColor: (state: DrawingState) => state.penColor,
-//   },
+  getters: {
+    getCurrentChannel: (state: CommunicatorState) => state.currentChannel,
+  },
 
-//   actions: {
-//     setPenSize(penSize: number) {
-//       this.penSize = penSize; // TODO Change this with a value selected by user
-//     },
-//     setPenColor(penColor: string) {
-//       this.penColor = penColor;
-//     },
-//   },
-// });
+  actions: {
+    setCurrentChannel(channel: string) {
+      this.currentChannel = channel;
+    },
+  },
+});

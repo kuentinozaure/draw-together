@@ -1,51 +1,36 @@
 <script setup lang="ts">
-import { onMounted, unMounted } from 'vue';
-import Communicator from '../socket/communicator';
-import { BaseSocketPayload } from '../models/base-socket-payload';
+// import { emit } from 'vue';
+import { useCommunicatorStore } from '../store/CommunicatorStore';
+const emit = defineEmits(['roomCreated', 'joinRoom', 'sendMessage']);
 
-let communicator: ref<Communicator> | null = null;
-let channel = ref<any>(null);
 let roomId = ref<string>('');
 
-onMounted(async () => {
-});
-
-onUnmounted(() => {
-    if (communicator) {
-        communicator.onCloseConnection();
-    }
-});
-
-const onSendMessageClick = () => {
-    const mathRandom = Math.random();
-
-    const payload: BaseSocketPayload<string> = {
-        date: new Date(),
-        roomId: roomId.value,
-        message: 'Hello world from' + mathRandom
-    };
-
-    communicator.onSendHelloMessage(payload);
-};
-
 const onCreateRoomClick = () => {
-    roomId.value = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
-    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
-    channel = communicator.onCreateChannel(roomId.value);
+    const randomRoomId = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
+    useCommunicatorStore().setCurrentChannel(randomRoomId.toString());
+    emit('roomCreated');
 
-    channel.subscribe((message) => {
-        console.log(message.data);
-    });
+    // communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+    // channel = communicator.onCreateChannel(roomId.value);
+    // channel.subscribe((message) => {
+    //     console.log(message.data);
+    // });
 };
 
 
 const onJoinRoomClick = () => {
-    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
-    channel = communicator.onCreateChannel(roomId.value);
+    useCommunicatorStore().setCurrentChannel(roomId.value.toString());
+    emit('joinRoom');
+    // communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+    // channel = communicator.onCreateChannel(roomId.value);
 
-    channel.subscribe((message) => {
-        console.log(message.data);
-    });
+    // channel.subscribe((message) => {
+    //     console.log(message.data);
+    // });
+};
+
+const onSendMessageClick = () => {
+    emit('sendMessage');
 };
 
 </script>
