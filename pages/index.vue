@@ -7,6 +7,8 @@ import { useCommunicatorStore } from '../store/CommunicatorStore';
 let communicator: ref<Communicator> | null = null;
 let channel: ref<any> | null = null;
 
+let drawMessage = ref<any[]>([]);
+
 const onSendMessageClick = () => {
     const roomId = useCommunicatorStore().getCurrentChannel;
     console.log('Send message');
@@ -22,7 +24,7 @@ const onSendMessageClick = () => {
 };
 
 onMounted(() => {
-    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
+    // communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
 });
 
 onUnmounted(() => {
@@ -35,11 +37,19 @@ const onJoinRoom = () => {
     const roomId = useCommunicatorStore().getCurrentChannel;
     channel = communicator.onCreateChannel(roomId);
 
-    channel.subscribe((message) => {
-        console.log(message.data);
-    });
+    // channel.subscribe('HELLO', (message) => {
+    //     console.log(message.data);
+    // });
+
+    // channel.subscribe('DRAW', (message) => {
+    //     console.log(message.data);
+    //     drawMessage.value.push(message.data);
+    // });
 };
 
+const sendDrawMessage = (data) => {
+    // channel.publish('DRAW', data);
+};
 
 </script>
 
@@ -47,7 +57,8 @@ const onJoinRoom = () => {
     <div class="board-container">
         <DrawingSideBar @joinRoom="onJoinRoom" @roomCreated="onJoinRoom" @sendMessage="onSendMessageClick" />
         <div class="drawing-area">
-            <DrawingArea />
+            <DrawingArea @draw="sendDrawMessage" @mouseUp="sendDrawMessage" @mouseDown="sendDrawMessage"
+                :messages="drawMessage.value" />
         </div>
 
     </div>

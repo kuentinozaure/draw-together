@@ -1,9 +1,24 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useDrawingStore } from '../store/DrawingStore';
+import { useCommunicatorStore } from '../store/CommunicatorStore';
+import Communicator from '../socket/communicator';
+
+
+const emit = defineEmits(['mouseDown', 'mouseUp', 'draw']);
 
 const drawingArea = useTemplateRef('drawing-area-canvas')
 const drawerAreaContainer = useTemplateRef('drawer-area-container')
+
+const props = defineProps({ messages: [] });
+
+let communicator: ref<Communicator> | null = null;
+let channel: ref<any> | null = null;
+
+watch(props, (newProps) => {
+    console.log(newProps.messages)
+})
+
 
 let ctx = null;
 let canvasOffsetX = 0;
@@ -15,6 +30,7 @@ let isMobile = false;
 
 
 onMounted(() => {
+    communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
     isMobile = window.innerWidth <= 768;
     ctx = drawingArea.value.getContext('2d');
     canvasOffsetX = drawerAreaContainer.value.offsetLeft;
@@ -27,7 +43,53 @@ onMounted(() => {
     drawingArea.value.width = !isMobile ? window.innerWidth - canvasOffsetX - 48 : window.innerWidth - canvasOffsetX - 32;
     drawingArea.value.height = !isMobile ? window.innerHeight - canvasOffsetY - 48 : window.innerHeight - canvasOffsetY - 97;
     setStrokeAttributes()
+
+    onJoinRoom();
+
 })
+
+const onJoinRoom = () => {
+    const roomId = useCommunicatorStore().getCurrentChannel;
+    channel = communicator.onCreateChannel(roomId);
+
+    channel.subscribe('HELLO', (message) => {
+        console.log(message.data);
+    });
+
+    channel.subscribe('DRAW', (message) => {
+        // console.log(message.data);
+        const { type, x, y, color, width } = message.data;
+        // drawMessage.value.push(message.data);
+
+        console.log(type)
+
+        if (type === 'start') {
+            console.log('start')
+
+            isPainting = true;
+            // setStrokeAttributes();
+            startX = x;
+            startY = y;
+        }
+
+
+        if (type === 'end') {
+            console.log('tesst')
+
+            isPainting = false;
+            ctx.stroke();
+            ctx.beginPath();
+        }
+
+
+        if (type === 'move') {
+            console.log('move')
+            ctx.lineTo(x - canvasOffsetX, y - canvasOffsetY);
+            ctx.stroke();
+        }
+
+    });
+};
 
 const onCanvasMousedown = (event: MouseEvent | TouchEvent) => {
     const { x, y } = getCoordinates(event);
@@ -36,12 +98,20 @@ const onCanvasMousedown = (event: MouseEvent | TouchEvent) => {
     setStrokeAttributes();
     startX = x;
     startY = y;
+
+    // emit('mouseDown', { x, y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'start' });
+
+    channel.publish('DRAW', { x, y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'start' });
 }
 
 const onCanvasMouseUp = (event: MouseEvent | TouchEvent) => {
+    const { x, y } = getCoordinates(event)
     isPainting = false;
     ctx.stroke();
     ctx.beginPath();
+
+    // emit('mouseUp', { x: x, y: y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'end' });
+    channel.publish('DRAW', { x: x, y: y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'end' });
 }
 
 const getCoordinates = (event: MouseEvent | TouchEvent) => {
@@ -64,6 +134,9 @@ const draw = (event: MouseEvent) => {
 
     ctx.lineTo(x - canvasOffsetX, y - canvasOffsetY);
     ctx.stroke();
+
+    // emit('draw', { x: x, y: y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'move' });
+    channel.publish('DRAW', { x: x, y: y, color: ctx.strokeStyle, width: ctx.lineWidth, type: 'move' });
 }
 
 const setStrokeAttributes = () => {

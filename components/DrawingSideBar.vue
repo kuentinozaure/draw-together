@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { emit } from 'vue';
 import { useCommunicatorStore } from '../store/CommunicatorStore';
 const emit = defineEmits(['roomCreated', 'joinRoom', 'sendMessage']);
 
@@ -9,24 +8,11 @@ const onCreateRoomClick = () => {
     const randomRoomId = Math.floor(Math.random() * (100000 - 1000 + 1)) + 1000
     useCommunicatorStore().setCurrentChannel(randomRoomId.toString());
     emit('roomCreated');
-
-    // communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
-    // channel = communicator.onCreateChannel(roomId.value);
-    // channel.subscribe((message) => {
-    //     console.log(message.data);
-    // });
 };
-
 
 const onJoinRoomClick = () => {
     useCommunicatorStore().setCurrentChannel(roomId.value.toString());
     emit('joinRoom');
-    // communicator = Communicator.getInstance(useRuntimeConfig().public.ablyApiKey);
-    // channel = communicator.onCreateChannel(roomId.value);
-
-    // channel.subscribe((message) => {
-    //     console.log(message.data);
-    // });
 };
 
 const onSendMessageClick = () => {
